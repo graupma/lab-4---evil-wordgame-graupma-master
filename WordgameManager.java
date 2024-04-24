@@ -7,7 +7,9 @@ public class WordgameManager {
     private int length;
     private int maxGuesses;
     private int guesses;
-    private Set<String> set;
+    private Set<String> words;
+    private Set<Character> setGuesses; 
+    private String pattern;
 
     
     
@@ -17,7 +19,8 @@ public class WordgameManager {
 length=len;
 maxGuesses=max;
 guesses=0;
-set= new TreeSet<>();
+words= new TreeSet<>();
+setGuesses= new TreeSet<>(); 
 
 if(length<1 || max<0){
     throw new IllegalArgumentException();
@@ -25,8 +28,13 @@ if(length<1 || max<0){
 
     for(String s : dictionary){
         if(s.length()== length){
-            set.add(s);
+            words.add(s);
         }
+    }
+
+    pattern="";
+    for(int i=0; i<length; i++){
+        pattern+="-";
     }
 
 
@@ -44,7 +52,7 @@ if(length<1 || max<0){
 
 
     public Set<String> words(){
-return set;
+return words;
     }
 
 
@@ -54,16 +62,49 @@ return set;
 
 
     public Set<Character> guesses(){
-        return null;
+        return setGuesses; 
     }
 
 
 
     public String pattern(){
-        return null;
+       if(words==null){
+       throw new IllegalArgumentException(); 
+       }
+
+        return pattern;
     }
 
     public int record(char guess){
+        if(guesses<1 || words.isEmpty()){
+            throw new IllegalStateException();
+        }
+
+        Map<String, Set<String>> m= new TreeMap<>(); 
+
+        for(String s: words){
+            String tempWord=pattern; 
+            for(int i=0; i<s.length(); i++){
+                if(s.charAt(i) == guess){
+                    tempWord= tempWord.substring(0, i) + guess + tempWord.substring(i); 
+                }
+
+            }
+
+            if(m.containsKey(tempWord)){
+                m.get(tempWord).add(s);
+            }
+            else{
+                m.put(tempWord, new TreeSet<>());
+                m.get(tempWord).add(s);
+            }
+        }
+        //loop through and figure out which set is the most
+int big=0;
+        for(String t: m.keySet() ){
+            
+        }
+
         return 0;
     }
 }
