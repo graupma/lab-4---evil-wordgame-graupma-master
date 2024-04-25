@@ -6,7 +6,6 @@ public class WordgameManager {
     
     private int length;
     private int maxGuesses;
-    private int guesses;
     private Set<String> words;
     private Set<Character> setGuesses; 
     private String pattern;
@@ -18,7 +17,7 @@ public class WordgameManager {
         
 length=len;
 maxGuesses=max;
-guesses=0;
+
 words= new TreeSet<>();
 setGuesses= new TreeSet<>(); 
 
@@ -57,7 +56,7 @@ return words;
 
 
     public int guessesLeft(){
-        return maxGuesses-guesses;
+        return maxGuesses;
     } 
 
 
@@ -76,17 +75,20 @@ return words;
     }
 
     public int record(char guess){
-        if(guesses<1 || words.isEmpty()){
+        if(maxGuesses<1 || words.isEmpty()){
             throw new IllegalStateException();
         }
+setGuesses.add(guess);
 
         Map<String, Set<String>> m= new TreeMap<>(); 
-
+int max=0;
+String maxKey="";
+String tempWord="";
         for(String s: words){
-            String tempWord=pattern; 
+    tempWord=pattern;
             for(int i=0; i<s.length(); i++){
                 if(s.charAt(i) == guess){
-                    tempWord= tempWord.substring(0, i) + guess + tempWord.substring(i); 
+                    tempWord= tempWord.substring(0, i) + guess + tempWord.substring(i+1); 
                 }
 
             }
@@ -98,13 +100,26 @@ return words;
                 m.put(tempWord, new TreeSet<>());
                 m.get(tempWord).add(s);
             }
-        }
-        //loop through and figure out which set is the most
-int big=0;
-        for(String t: m.keySet() ){
+                //find biggest set
+            if(m.get(tempWord).size()> max){
+                max=m.get(tempWord).size();
+                maxKey=tempWord; 
+            }
             
         }
+        
+   pattern= maxKey;     
+words= m.get(maxKey);
+int count=0;
+for(int i=0; i< pattern.length(); i++){
+    if(pattern.charAt(i)==guess){
+        count++;
+    }
+    
+}
+if(count==0)
+maxGuesses--;
 
-        return 0;
+        return count;
     }
 }
